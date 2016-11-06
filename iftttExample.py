@@ -6,7 +6,7 @@ import paho.mqtt.client as mqtt
 import json
 
 hubPrefix = 'nodes/bridge/0/'
-ipAddress = '192.168.0.101'
+ipAddress = '127.0.0.1'
 port = 1883
 makerChannelName = 'high_temperature'
 makerChannelKey = 'iClY1--OeGUNreTpASC7Dl42mWgjFcc19eHSWLGaAjA'
