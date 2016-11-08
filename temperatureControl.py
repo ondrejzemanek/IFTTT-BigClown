@@ -1,35 +1,18 @@
-#!/usr/bin/env python3
-
-# #Simple temperature control class
 class TemperatureControl:
+    """Simple temperature control class"""
 
-    __treshold = 20
-    __actTreshold = 20
+    _max_temperature = 20
 
-    def __init__(self, treshold):
-        self.treshold = treshold
-        self.actTreshold = treshold
+    def __init__(self):
+        self._max_temperature = 20
 
-    def HighTemperature(self, value):
-        ''':param value: actual temperature
-        :return: Return true if actual temperature is higher than threshold.'''
+    def is_higher(self, value):
+        """ :param value: actual temperature
+            :return: Return true if actual temperature is higher than max_temperature.
+        """
         value = round(value)
-        if value > self.actTreshold:
-            self.actTreshold = value
+        if value > self._max_temperature:
+            self._max_temperature = value
             return True
-        elif value - 5 < self.actTreshold and value > self.treshold:
-            self.actTreshold = value
-
-        return False
-
-    def LowTemperature(self, value):
-        ''':param value: actual temperature
-        :return: Return true if actual temperature is lower than threshold.'''
-        value = round(value)
-        if value < self.actTreshold:
-            return True
-            self.actTreshold = value
-        elif value - 5 > self.actTreshold and value < self.treshold:
-            self.actTreshold = value
-
-        return False
+        else:
+            return False

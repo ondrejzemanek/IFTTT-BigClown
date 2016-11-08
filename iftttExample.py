@@ -1,39 +1,54 @@
-#!/usr/bin/env python3
-
-from iftttme import MakerChannelSender
-from temperatureControl import TemperatureControl
-import paho.mqtt.client as mqtt
 import json
-
-hubPrefix = 'nodes/bridge/0/'
-ipAddress = '127.0.0.1'
-port = 1883
-makerChannelName = 'high_temperature'
-makerChannelKey = 'iClY1--OeGUNreTpASC7Dl42mWgjFcc19eHSWLGaAjA'
-temperatureTreshold = 19
+import paho.mqtt.client
+from makerService import MakerServiceSender
+from temperatureControl import TemperatureControl
+from threading import Thread
 
 
-tempControl = TemperatureControl(temperatureTreshold)
-maker = MakerChannelSender(makerChannelName, makerChannelKey)
+# MQTT settings
+HUB_PREFIX = 'nodes/bridge/0/'
+DEV_IP_ADDRESS = '192.168.0.24'
+DEV_PORT = 1883
+KEEP_ALIVE = 60
+
+# Maker settings
+MAKER_SERVICE_NAME = 'high_temperature'
+MAKER_SERVICE_KEY = 'zM48FozcsUsK_HJouFLIX-32q2PKtMwS9lcmMCq50j'
 
 
-# Hub < --- > PI comunication
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code " + str(rc))
-    client.subscribe(hubPrefix + "#")
+    print('Connected with result code ' + str(rc))
+    client.subscribe(HUB_PREFIX + "#")
 
 
 def on_message(client, userdata, msg):
+    t = Thread(target=check_temperature, name=None, args=[msg])
+    t.start()
+
+
+def check_temperature(msg):
     payload = json.loads(msg.payload.decode('utf-8'))
+    for key, value in payload.items():
+        if key == 'temperature':
+            if tempControl.is_higher(value[0]):
+                maker.make_request(''.join(str(e) for e in value), '', '')
 
-    for k, v in payload.items():
-        if k == 'temperature':
-            if tempControl.HighTemperature(v[0]):
-                maker.make_request(str(v[0]) + str(v[1]), '', '') #send data to IFTTT Maker
 
-client = mqtt.Client()
+client = paho.mqtt.client.Client()
 client.on_connect = on_connect
 client.on_message = on_message
-client.connect(ipAddress, port, 60)
+
+try:
+    client.connect(DEV_IP_ADDRESS, DEV_PORT, KEEP_ALIVE)
+except ConnectionRefusedError:
+    print('Connection to ' + DEV_IP_ADDRESS + ' refused!')
+    exit(1)
+except:
+    print('Connection to ' + DEV_IP_ADDRESS + ' failed.')
+    exit(1)
+
+tempControl = TemperatureControl()
+
+maker = MakerServiceSender(MAKER_SERVICE_NAME, MAKER_SERVICE_KEY)
 
 client.loop_forever()
