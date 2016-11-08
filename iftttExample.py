@@ -7,13 +7,13 @@ from threading import Thread
 
 # MQTT settings
 HUB_PREFIX = 'nodes/bridge/0/'
-DEV_IP_ADDRESS = '192.168.0.24'
+DEV_IP_ADDRESS = '127.0.0.1'
 DEV_PORT = 1883
 KEEP_ALIVE = 60
 
 # Maker settings
-MAKER_SERVICE_NAME = 'high_temperature'
-MAKER_SERVICE_KEY = 'zM48FozcsUsK_HJouFLIX-32q2PKtMwS9lcmMCq50j'
+MAKER_SERVICE_NAME = '{your_maker_event_name}'
+MAKER_SERVICE_KEY = '{your_maker_key}'
 
 
 def on_connect(client, userdata, flags, rc):
