@@ -1,36 +1,10 @@
 #!/usr/bin/env python3
 
+import sys
 import json
+import requests
 import paho.mqtt.client
-from threading import Thread
-from urllib.parse import urlencode
-from urllib.request import Request, urlopen
-
-
-class TemperatureControl:
-    """Simple temperature control class"""
-
-    _max_temperature = 0
-    _min_temperature = 0
-
-    def __init__(self, min_temp,  max_temp):
-        """
-        :param min_temp: bottom temperature treshold
-        :param max_temp: top temperature treshold
-        """
-        self._max_temperature = min_temp
-        self._min_temperature = max_temp
-
-    def is_out_of_range(self, value):
-        """ :param value: actual temperature
-            :return: Return true if actual temperature is higher than max_temperature. (Measurements with hysteresis 1 ° C.)
-        """
-        value = round(value)
-        if value > self._max_temperature or value < self._min_temperature:
-            self._max_temperature = value
-            return True
-        else:
-            return False
+import threading
 
 
 class MakerServiceSender:
@@ -57,9 +31,8 @@ class MakerServiceSender:
         url = self._create_url()
 
         if url is not None:
-            post_fields = {'value1': value1, 'value2': value2, 'value3': value3}
-            request = Request(url, urlencode(post_fields).encode())
-            return urlopen(request).read().decode()
+            json_data = {'value1': value1, 'value2': value2, 'value3': value3}
+            return requests.post(url, None, json_data)
 
 
 if __name__ == '__main__':
@@ -73,22 +46,50 @@ if __name__ == '__main__':
     MAKER_SERVICE_NAME = '{your_maker_event_name}'
     MAKER_SERVICE_KEY = '{your_maker_key}'
 
+    # Temperature control
+    TEMPERATURE_TRESHOLD_HIGH = 21
+    TEMPERATURE_TRESHOLD_LOW = 15
+    TEMPERATURE_ALARM_HYSTERESIS = 1
+
+    is_temperature_alarm_high = False
+    is_temperature_alarm_low = False
+    lock = threading.Lock()
+
     def on_connect(client, userdata, flags, rc):
         print('Connected with result code ' + str(rc))
         client.subscribe(HUB_PREFIX + "#")
 
 
     def on_message(client, userdata, msg):
-        t = Thread(target=check_temperature, name=None, args=[msg])
+        t = threading.Thread(target=check_temperature, name=None, args=[msg])
         t.start()
 
 
     def check_temperature(msg):
+        global is_temperature_alarm_high
+        global is_temperature_alarm_low
         payload = json.loads(msg.payload.decode('utf-8'))
         for key, value in payload.items():
             if key == 'temperature':
-                if tempControl.is_out_of_range(value[0]):
-                    maker.make_request(''.join(str(e) for e in value), '', '')
+                with lock:
+                    temperature = value[0]
+                    if not is_temperature_alarm_high:
+                        if temperature >= TEMPERATURE_TRESHOLD_HIGH:
+                            is_temperature_alarm_high = True
+                            maker.make_request("Temperature is too high!", '', '')
+                    else:
+                        if temperature < (TEMPERATURE_TRESHOLD_HIGH - TEMPERATURE_ALARM_HYSTERESIS):
+                            is_temperature_alarm_high = False
+                            maker.make_request("Temperature alarm deactivated", '', '')
+
+                    if not is_temperature_alarm_low:
+                        if temperature <= TEMPERATURE_TRESHOLD_LOW:
+                            is_temperature_alarm_low = True
+                            maker.make_request("Temperature is too low!", '', '')
+                    else:
+                        if temperature > (TEMPERATURE_TRESHOLD_LOW + TEMPERATURE_ALARM_HYSTERESIS):
+                            is_temperature_alarm_low = False
+                            maker.make_request("Temperature alarm deactivated", '', '')
 
 
     client = paho.mqtt.client.Client()
@@ -99,12 +100,10 @@ if __name__ == '__main__':
         client.connect(DEV_IP_ADDRESS, DEV_PORT, KEEP_ALIVE)
     except ConnectionRefusedError:
         print('Connection to ' + DEV_IP_ADDRESS + ' refused!')
-        exit(1)
+        sys.exit(1)
     except:
         print('Connection to ' + DEV_IP_ADDRESS + ' failed.')
-        exit(1)
-
-    tempControl = TemperatureControl(15, 22)
+        sys.exit(1)
 
     maker = MakerServiceSender(MAKER_SERVICE_NAME, MAKER_SERVICE_KEY)
 
