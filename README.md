@@ -1,4 +1,4 @@
-# IFTTTMakerServiceExample
+# IFTTT-BigClown (Maker service) Example
 This is a simple python module to trigger event to IFTTT Maker channel
 
 ## Use
