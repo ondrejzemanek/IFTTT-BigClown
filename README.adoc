@@ -10,13 +10,13 @@ As a trigger service can be used *Maker service* that allows you to communicate 
 
 The Maker service is useful for BigClown Hub integration.
 
-== How to create an new Applet?
+== How to create a new Applet?
 
 .   The first step is to create your account on *IFTTT.com*.
 
 .   After login, click on your username in the top-right corner and open menu, then Select *"New Applet"*.
 
-.   This opens you a page with "if * this * Then That.". There first select the trigger service *"this"*.
+.   This opens a page with "if *this* Then That.". First select the trigger service *"this"*.
 
 .   From the list of all services, select trigger *Maker service*.
 
@@ -24,8 +24,8 @@ The Maker service is useful for BigClown Hub integration.
 
 .   Fill the *event name* and select *"Create Trigger"*. 
 
-.	Last step bring you back to the page "Then if this *That*".But this time set *action „that“*.
-.   Choose action service that you want to affect by trigger service and follow the instructions.
+.	Last step brings you back to the page "Then if this *That*".But this time set *action „that“*.
+.   Choose action service that you want to affected by trigger service and follow the service instructions.
 
 .   Finally click on *"Create action"* and you are done!
 
@@ -37,10 +37,11 @@ When you create an account on the Service Maker,  maker generates a unique key t
 This key can be found in the Maker channel settings.
 
 For information about Maker channel follow these instructions:
+
 .   Search for *Maker* service. (On the top bar of IFTTT page, click on *"Search"*.)
 .   On the "About" page click on *"Settings"* (in the top-right corner).
-.	Last step bring you to settings page for Maker channel. Here you will need *URL* that contain the unique Maker key.
-.   Click on *URL*, that will brings you to how-to page.
+.	Last step brings you to settings page for Maker channel. Here you will need *URL* that contains the unique Maker key.
+.   Click on *URL*, that will bring you to how-to page.
 
 According to these instructions, you can build a final address where you can send data.
 
@@ -66,7 +67,7 @@ You can send up to *3 values* in one request.
 
 === *ifttt-bigclown*
 
-A simple implementation example for BigClown Hub.
+A simple *python* example for BigClown Hub.
 
 Github link: https://github.com/ondrejzemanek/ifttt-bigclown[*ifttt-bigclown @ Github*].
 
@@ -76,9 +77,9 @@ Usage
 .   Set your event name and Maker key in *_url* variable in *IFTTTWorker* class.
 .   If you want, you can modify constants for temperature thresholds and hysteresis.
 [source, python]
-TEMPERATURE_TRESHOLD_HIGH = {horní hranice teploty}
-TEMPERATURE_TRESHOLD_LOW = {spodní hranice teploty}
-TEMPERATURE_ALARM_HYSTERESIS = {hystereze alarmu teploty}
+TEMPERATURE_TRESHOLD_HIGH = {top threshold temperature}
+TEMPERATURE_TRESHOLD_LOW = {bottom threshold temperature}
+TEMPERATURE_ALARM_HYSTERESIS = {temperature hysteresis}
 
 . Run it.
 [source]
