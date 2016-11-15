@@ -60,7 +60,7 @@ Jak již bylo popsáno výše, lze posílat *maximálně 3 hodnoty*.
 
 Jednoduchý příklad implementace a použití IFTTT Maker služby s BigClown.
 
-odkaz ke stažení: https://github.com/ondrejzemanek/IFTTT-BigClown[*ifttt-bigclown @ Github*].
+odkaz ke stažení: https://github.com/ondrejzemanek/ifttt-bigclown[*ifttt-bigclown @ Github*].
 
 
 Použití
