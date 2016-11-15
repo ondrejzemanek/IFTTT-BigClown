@@ -24,7 +24,7 @@ The Maker service is useful for BigClown Hub integration.
 
 .   Fill the *event name* and select *"Create Trigger"*. 
 
-.	Last step brings you back to the page "Then if this *That*".But this time set *action „that“*.
+.	Last step brings you back to the page "Then if this *That*". But this time set *action „that“*.
 .   Choose action service that you want to affected by trigger service and follow the service instructions.
 
 .   Finally click on *"Create action"* and you are done!
