@@ -1,81 +1,85 @@
-= Propojení s IFTTT
+= IFTTT integration
 
-== Co je IFTTT?
+== What is IFTTT?
 
-*IFTTT* (*„If This, Then That“*, což v překladu znamená „když se stane tohle, tak (udělej) toto“) slouží k automatizaci vašeho Internetu.
+*IFTTT* or “If This Then That” is a free web-based service that aggregates many other web apps into one place and can then perform actions given a certain set of criteria.
 
-Funguje tak, že umí přebírat informace z nějaké služby – e-mailu, sociální sítě, cloud úložiště a řady dalších online služeb. Na základě informací z této zdrojové služby (*trigger*) umí něco udělat a výsledek předat cílové službě (*action*). Celý tento předpis se nazývá *Applet*.
+IFTTT is made to create *recipes* -- Something happens in one service *This* (*Trigger*), Then something should Happen in another service *That* (*Action*). This whole process is called *Applet*.
 
-Jako zdrojovou službu lze použít i tzv. *Maker* službu, která dovoluje komunikovat s IFTTT skrze webový požadavek (POST). Touto službou můžeme předat *až 3 hodnoty*, které můžeme následně použít například pro předání cílové službě (*action*).
+As a trigger service can be used *Maker service* that allows you to communicate with IFTTT through a *Web request* (*POST*).
 
-To se nám bude hodit pro odesílání informací o našem zařízení.
+The Maker service is useful for BigClown Hub integration.
 
-== Jak vytvořit Applet?
-.	Abychom si mohli vytvořit vlastní applet, je nutné se zaregistrovat na *IFTTT.com*.  
-.	Po přihlášení stačí kliknutím na vaše uživatelské jméno v pravém horním rohu otevřít menu a zvolit *„New Applet“*.
-.	Otevře se vám jednoduchá stránka s textem „if *this* then that“. Zde vybereme nejdříve zdrojovou službu *„this“*, která bude spouštět Applet a předávat data.
-.	Zobrazí se dlouhý seznam všech možných zdrojových služeb. Pro náš účel vybereme službu *„Maker“*.
-.	Připojíme se do Maker služby a zvolíme možnost služby *„Receive a web request“*.
-.	Vyplníme *jméno události* a zvolíme *„Create trigger“*. Tím se vrátíme na stránku s „if this then *that*“.
-.	Tentokrát ale nastavíme cílovou službu *„that“* (*action*).
-.	Opět se nám otevře seznam všech služeb, které lze použít jako cílovou službu. Najdeme si službu, které chceme předávat informace. Pro tuto ukázku vybereme *Gmail*.	Přihlásíme se přes náš Gmail účet a zvolíme možnost *„Send an email“*.
-.	Vyplníme adresu příjemce, předmět a zprávu. Ať už do zprávy nebo předmětu můžeme přidat tzv. *ingredience*, což jsou informace získané ze zdrojové služby. (3 hodnoty, název události a čas, kdy nastala událost)
-.	Vytvoříme akci tlačítkem *„Create action“* a uložíme náš hotový Applet.
+== How to create an new Applet?
 
-== Jak posílat data přes Maker službu do IFTTT?
+.   The first step is to create your account on *IFTTT.com*.
 
-Při vytváření účtu Maker služby se nám vygeneroval unikátní klíč, který dovoluje komunikovat právě s naším IFTTT účtem.
+.   After login, click on your username in the top-right corner and open menu, then Select *"New Applet"*.
 
-Tento klíč nalezneme v informacích o Maker účtu.
+.   This opens you a page with "if * this * Then That.". There first select the trigger service *"this"*.
 
-K informacím o Maker účtu se dostaneme následujícím způsobem:
+.   From the list of all services, select trigger *Maker service*.
 
-.	Vyhledáme službu *Maker* (Na horní liště IFTTT stránky klikneme na *„Search“*).
-.	Na stránce o službě vybereme v pravém horním rohu nastavení (tlačítko *„Settings“*), tím se dostaneme na informace o Maker účtu.
-.	Zde nás zajímá *URL*, které obsahuje hledaný klíč. 
-.	Při otevření URL odkazu můžeme otevřít *podrobný návod*, jak se pracuje s Maker službou.
+.   Connect to the Maker channel and select option *"Receive a web request"*.
+
+.   Fill the *event name* and select *"Create Trigger"*. 
+
+.	Last step bring you back to the page "Then if this *That*".But this time set *action „that“*.
+.   Choose action service that you want to affect by trigger service and follow the instructions.
+
+.   Finally click on *"Create action"* and you are done!
+
+== How to send data to IFTTT using Maker service?
+
+When you create an account on the Service Maker,  maker generates a unique key that allows you to communicate with IFTTT.
 
 
-Podle návodu, který jsme právě našli, sestavíme adresu, kam budeme odesílat data. 
-*Výsledná adresa* bude vypadat takto:
+This key can be found in the Maker channel settings.
 
-[source]
---
+For information about Maker channel follow these instructions:
+.   Search for *Maker* service. (On the top bar of IFTTT page, click on *"Search"*.)
+.   On the "About" page click on *"Settings"* (in the top-right corner).
+.	Last step bring you to settings page for Maker channel. Here you will need *URL* that contain the unique Maker key.
+.   Click on *URL*, that will brings you to how-to page.
+
+According to these instructions, you can build a final address where you can send data.
+
+The *final address* will look like this:
+
+
+----
 https://maker.ifttt.com/trigger/{event}/with/key/{key}
 
-{event} - název události (krok 6 v návodu, jak vytvořit applet)
-{key} – váš vygenerovaný klíč k Maker 
---
-Data se přes tuto adresu odesílají pomocí metody *POST* ve formátu *JSON*.
+{event-name} - Step 6 in the instructions "How to create an new applet?".
+{key} – your Maker unique key
+----
+
+
+Data is sent using the *POST* method in the *JSON* format:
 
 [source, json]
-'{"value1":"hodnota1","value2":"hodnota2","value3":"hodnota3"}'
+{"value1":"your_first_value","value2":"your_second_value","value3":"your_third_value"}
 
+You can send up to *3 values* in one request.
 
-Jak již bylo popsáno výše, lze posílat *maximálně 3 hodnoty*.
-
-== Příklad použití
+== Example
 
 === *ifttt-bigclown*
 
-Jednoduchý příklad implementace a použití IFTTT Maker služby s BigClown.
+A simple implementation example for BigClown Hub.
 
-odkaz ke stažení: https://github.com/ondrejzemanek/ifttt-bigclown[*ifttt-bigclown @ Github*].
+Github link: https://github.com/ondrejzemanek/ifttt-bigclown[*ifttt-bigclown @ Github*].
 
 
-Použití
-^^^^^^^
-. Nastavení konstant pro komunikaci s IFTTT *Maker službou* souboru.
-[source, python]
-MAKER_SERVICE_NAME = {jméno události}
-MAKER_SERVICE_KEY = {Maker klíč}
-
-. Definice *spodní/horní hranice* a *hystereze teploty* natavením konstant 
+Usage
+^^^^^
+.   Set your event name and Maker key in *_url* variable in *IFTTTWorker* class.
+.   If you want, you can modify constants for temperature thresholds and hysteresis.
 [source, python]
 TEMPERATURE_TRESHOLD_HIGH = {horní hranice teploty}
 TEMPERATURE_TRESHOLD_LOW = {spodní hranice teploty}
 TEMPERATURE_ALARM_HYSTERESIS = {hystereze alarmu teploty}
 
-. Spuštění
+. Run it.
 [source]
 python3 ifttt-bigclown.py
