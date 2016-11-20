@@ -22,7 +22,7 @@ class IFTTTWorker(threading.Thread):
 
 if __name__ == '__main__':
 
-    TEMPERATURE_TRESHOLD_HIGH = 21
+    TEMPERATURE_TRESHOLD_HIGH = 30
     TEMPERATURE_TRESHOLD_LOW = 15
     TEMPERATURE_ALARM_HYSTERESIS = 1
 
@@ -43,26 +43,23 @@ if __name__ == '__main__':
                 if not is_temperature_alarm_high:
                     if temperature >= TEMPERATURE_TRESHOLD_HIGH:
                         is_temperature_alarm_high = True
-                        IFTTTWorker('Temperature is too high!').start()
+                        IFTTTWorker('Temperature is too HIGH!').start()
                 else:
                     if temperature < (TEMPERATURE_TRESHOLD_HIGH - TEMPERATURE_ALARM_HYSTERESIS):
                         is_temperature_alarm_high = False
-                        IFTTTWorker('Temperature alarm deactivated').start()
-
+                        IFTTTWorker('Temperature alarm HIGH deactivated').start()
                 if not is_temperature_alarm_low:
                     if temperature <= TEMPERATURE_TRESHOLD_LOW:
                         is_temperature_alarm_low = True
-                        IFTTTWorker('Temperature is too low!').start()
+                        IFTTTWorker('Temperature is too LOW!').start()
                 else:
                     if temperature > (TEMPERATURE_TRESHOLD_LOW + TEMPERATURE_ALARM_HYSTERESIS):
                         is_temperature_alarm_low = False
-                        IFTTTWorker('Temperature alarm deactivated').start()
+                        IFTTTWorker('Temperature alarm LOW deactivated').start()
 
 
     client = paho.mqtt.client.Client()
     client.on_connect = on_connect
     client.on_message = on_message
-
     client.connect('localhost')
-
     client.loop_forever()

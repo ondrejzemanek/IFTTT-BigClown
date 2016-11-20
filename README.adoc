@@ -1,85 +1,83 @@
-= IFTTT integration
+= BigClown IFTTT Integration
+
+
+== Preface
+
+This tutorial will show how to connect BigClown MQTT message from temperature sensor with IFTTT Maker service and alert on temperature high/low alarms.
+Integral part of this tutorial is Python 3 script iftt-bigclown.py found in this repository.
+
 
 == What is IFTTT?
 
 *IFTTT* or “If This Then That” is a free web-based service that aggregates many other web apps into one place and can then perform actions given a certain set of criteria.
 
-IFTTT is made to create *recipes* -- Something happens in one service *This* (*Trigger*), Then something should Happen in another service *That* (*Action*). This whole process is called *Applet*.
+IFTTT is made to create *recipes* -- Something happens in one service *This* (*Trigger*), Then something should happen in another service *That* (*Action*).
+This whole process is called *Applet*.
 
 As a trigger service can be used *Maker service* that allows you to communicate with IFTTT through a *Web request* (*POST*).
 
 The Maker service is useful for BigClown Hub integration.
 
+
 == How to create a new Applet?
 
-.   The first step is to create your account on *IFTTT.com*.
+. The first step is to create your account on *IFTTT.com*.
+. After login, click on your username in the top-right corner and open menu, then Select *"New Applet"*.
+. This opens a page with "if *this* Then That.". First select the trigger service *"this"*.
+. From the list of all services, select trigger *Maker service*.
+. Connect to the Maker channel and select option *"Receive a web request"*.
+. Fill the *event name* and select *"Create Trigger"*. 
+. Last step brings you back to the page "Then if this *That*". But this time set *action "that"*.
+. Choose action service that you want to affected by trigger service and follow the service instructions.
+. Finally click on *"Create action"* and you are done!
 
-.   After login, click on your username in the top-right corner and open menu, then Select *"New Applet"*.
-
-.   This opens a page with "if *this* Then That.". First select the trigger service *"this"*.
-
-.   From the list of all services, select trigger *Maker service*.
-
-.   Connect to the Maker channel and select option *"Receive a web request"*.
-
-.   Fill the *event name* and select *"Create Trigger"*. 
-
-.	Last step brings you back to the page "Then if this *That*". But this time set *action „that“*.
-.   Choose action service that you want to affected by trigger service and follow the service instructions.
-
-.   Finally click on *"Create action"* and you are done!
 
 == How to send data to IFTTT using Maker service?
 
 When you create an account on the Service Maker,  maker generates a unique key that allows you to communicate with IFTTT.
 
-
 This key can be found in the Maker channel settings.
 
 For information about Maker channel follow these instructions:
 
-.   Search for *Maker* service. (On the top bar of IFTTT page, click on *"Search"*.)
-.   On the "About" page click on *"Settings"* (in the top-right corner).
-.	Last step brings you to settings page for Maker channel. Here you will need *URL* that contains the unique Maker key.
-.   Click on *URL*, that will bring you to how-to page.
+. Search for *Maker* service. (On the top bar of IFTTT page, click on *"Search"*.)
+. On the "About" page click on *"Settings"* (in the top-right corner).
+. Last step brings you to settings page for Maker channel. Here you will need *URL* that contains the unique Maker key.
+. Click on *URL*, that will bring you to how-to page.
 
 According to these instructions, you can build a final address where you can send data.
 
 The *final address* will look like this:
 
-
 ----
 https://maker.ifttt.com/trigger/{event}/with/key/{key}
 
-{event-name} - Step 6 in the instructions "How to create an new applet?".
+{event} - Step 6 in the instructions "How to create an new applet?".
 {key} – your Maker unique key
 ----
-
 
 Data is sent using the *POST* method in the *JSON* format:
 
 [source, json]
-{"value1":"your_first_value","value2":"your_second_value","value3":"your_third_value"}
+{"value1": "your_first_value", "value2": "your_second_value", "value3": "your_third_value"}
 
-You can send up to *3 values* in one request.
-
-== Example
-
-=== *ifttt-bigclown*
-
-A simple *python* example for BigClown Hub.
-
-Github link: https://github.com/ondrejzemanek/ifttt-bigclown[*ifttt-bigclown @ Github*].
+You can send up to *three values* in one request.
 
 
-Usage
-^^^^^
-.   Set your event name and Maker key in *_url* variable in *IFTTTWorker* class.
-.   If you want, you can modify constants for temperature thresholds and hysteresis.
+== Python 3 script
+
+A simple *Python 3* example for https://github.com/bigclownlabs/bc-hub[BigClown Hub].
+
+Link: link:ifttt-bigclown.py[ifttt-bigclown.py]
+
+=== Usage
+
+. Set your event name and Maker key in *_url* variable in *IFTTTWorker* class.
+. If you want, you can modify constants for temperature thresholds and hysteresis.
 [source, python]
-TEMPERATURE_TRESHOLD_HIGH = {top threshold temperature}
-TEMPERATURE_TRESHOLD_LOW = {bottom threshold temperature}
-TEMPERATURE_ALARM_HYSTERESIS = {temperature hysteresis}
+TEMPERATURE_TRESHOLD_HIGH = {upper temperature limit}
+TEMPERATURE_TRESHOLD_LOW = {lower temperature limit}
+TEMPERATURE_ALARM_HYSTERESIS = {temperature hysteresis (same for both limits)}
 
 . Run it.
 [source]
